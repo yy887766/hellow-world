@@ -5,7 +5,7 @@ if (properties.get("exitCode") != 0) {
 	}
 else {
 	var errors = "noerror"
-	scanner.register("FAILED|Failed|failed|ERROR|Error|error", function(lineNumber, line) {
+	scanner.register("FAILED|Failed|failed|Error|error", function(lineNumber, line) {
 	var value = line;
 	//commandOut.print(lineNumber+":  "+value+"\n\r\t");
 	errors=lineNumber+ ":" + line + "\n";
