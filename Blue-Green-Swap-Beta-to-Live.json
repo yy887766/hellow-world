@@ -1,0 +1,244 @@
+{
+    "name": "Blue-Green-Swap-Beta-to-Live",
+    "description": "",
+    "rootActivity": {
+        "edges": [
+            {
+                "to": "check node status",
+                "type": "ALWAYS",
+                "value": ""
+            },
+            {
+                "to": "OOS for Beta_LTM_Pool",
+                "from": "check node status",
+                "type": "VALUE",
+                "value": "beta"
+            },
+            {
+                "to": "Set LB.status to beta",
+                "from": "IS for LIVE_LTM_Pool",
+                "type": "SUCCESS",
+                "value": ""
+            },
+            {
+                "to": "0939cbe2646dd923de50b65b3d69ba",
+                "from": "check node status",
+                "type": "VALUE",
+                "value": "live\nswapping"
+            },
+            {
+                "to": "IS for LIVE_LTM_Pool",
+                "from": "OOS for Beta_LTM_Pool",
+                "type": "SUCCESS",
+                "value": ""
+            },
+            {
+                "to": "0939cbe2646dd923de50b65b3d69ba",
+                "from": "Set LB.status to beta",
+                "type": "SUCCESS",
+                "value": ""
+            }
+        ],
+        "offsets": [
+            {
+                "name": "OOS for Beta_LTM_Pool",
+                "x": -241.5,
+                "y": 230,
+                "h": 60,
+                "w": 250
+            },
+            {
+                "name": "Set LB.status to beta",
+                "x": -11.5,
+                "y": 500,
+                "h": 60,
+                "w": 240
+            },
+            {
+                "name": "0939cbe2646dd923de50b65b3d69ba",
+                "x": 338.5,
+                "y": 380,
+                "h": 50,
+                "w": 90
+            },
+            {
+                "name": "check node status",
+                "x": -45,
+                "y": 111,
+                "h": 60,
+                "w": 250
+            },
+            {
+                "name": "IS for LIVE_LTM_Pool",
+                "x": -181.5,
+                "y": 362,
+                "h": 60,
+                "w": 250
+            }
+        ],
+        "type": "graph",
+        "name": "e0635130-26d0-462c-b174-1aba2bb63f2a",
+        "children": [
+            {
+                "type": "finish",
+                "name": "0939cbe2646dd923de50b65b3d69ba",
+                "children": []
+            },
+            {
+                "propertyName": "${p:resource\/LB.status}",
+                "type": "switch",
+                "name": "check node status",
+                "children": []
+            },
+            {
+                "processName": "Take-Node-Out-of-Service",
+                "resourcePath": "${p:resource.path}",
+                "properties": {
+                    "LTMEnabled": "${p:LTMEnabled}",
+                    "resourcePath": "${p:resource.path}",
+                    "processId": "c3c45ca3-9ba1-4dcc-8506-6ac9189bba81",
+                    "f5.nodeport": "${p:port}",
+                    "f5.poolname": "${p:resource\/LB.poolname.beta}",
+                    "f5.environment": "${p:environment}"
+                },
+                "type": "runProcess",
+                "name": "OOS for Beta_LTM_Pool",
+                "children": []
+            },
+            {
+                "processName": "Put-Node-Back-In-Service",
+                "resourcePath": "${p:resource.path}",
+                "properties": {
+                    "LTMEnabled": "${p:LTMEnabled}",
+                    "resourcePath": "${p:resource.path}",
+                    "processId": "6834fe8b-4cb6-4ef6-961c-f9ae9d0bf85c",
+                    "f5.nodeport": "${p:port}",
+                    "f5.poolname": "${p:resource\/LB.poolname.live}",
+                    "f5.environment": "${p:environment}"
+                },
+                "type": "runProcess",
+                "name": "IS for LIVE_LTM_Pool",
+                "children": []
+            },
+            {
+                "processName": "Set-Resource-Property",
+                "resourcePath": "${p:resource.path}",
+                "properties": {
+                    "propValue": "live",
+                    "resourcePath": "${p:resource.path}",
+                    "processId": "8abfa8a7-ef52-4ff1-839d-d20a9792485f",
+                    "propName": "LB.status"
+                },
+                "type": "runProcess",
+                "name": "Set LB.status to beta",
+                "children": []
+            }
+        ]
+    },
+    "properties": [
+        {
+            "name": "contextType",
+            "value": "Resource",
+            "description": "",
+            "secure": false
+        },
+        {
+            "name": "workingDir",
+            "value": "${p:resource\/work.dir}\/${p:process.name}",
+            "description": "",
+            "secure": false
+        }
+    ],
+    "propDefs": [
+        {
+            "name": "environment",
+            "label": "environment",
+            "pattern": "",
+            "type": "TEXT",
+            "required": true,
+            "description": "environment (QA STG UAT PROD)",
+            "placeholder": ""
+        },
+        {
+            "name": "port",
+            "label": "port",
+            "pattern": "",
+            "type": "TEXT",
+            "required": true,
+            "description": "port",
+            "placeholder": ""
+        },
+        {
+            "name": "LTMEnabled",
+            "label": "LTMEnabled",
+            "pattern": "",
+            "type": "TEXT",
+            "value": "false",
+            "required": true,
+            "description": "",
+            "placeholder": ""
+        }
+    ],
+    "teamMappings": [
+        {
+            "teamId": "0c8961de-e650-4c19-b16e-a75388be5d12",
+            "teamLabel": "RET",
+            "resourceTypeId": "20000000000000000000000000000109",
+            "resourceTypeName": "Process"
+        },
+        {
+            "teamId": "1a568021-d178-43fe-ae9f-04cfe84d9666",
+            "teamLabel": "MI",
+            "resourceTypeId": "20000000000000000000000000000109",
+            "resourceTypeName": "Process"
+        },
+        {
+            "teamId": "25ce5f09-b2db-4d0e-86c8-a66aa929ab2b",
+            "teamLabel": "DP",
+            "resourceTypeId": "20000000000000000000000000000109",
+            "resourceTypeName": "Process"
+        },
+        {
+            "teamId": "329ce7c0-f71f-46ac-bca8-2c0d011cbb4a",
+            "teamLabel": "HELLO",
+            "resourceTypeId": "20000000000000000000000000000109",
+            "resourceTypeName": "Process"
+        },
+        {
+            "teamId": "40554d70-8fe2-4dc1-a156-09620e43937a",
+            "teamLabel": "ENGR",
+            "resourceTypeId": "20000000000000000000000000000109",
+            "resourceTypeName": "Process"
+        },
+        {
+            "teamId": "4db7777e-0b09-4784-a832-b9983ca587b6",
+            "teamLabel": "AWS",
+            "resourceTypeId": "20000000000000000000000000000109",
+            "resourceTypeName": "Process"
+        },
+        {
+            "teamId": "73ef0bd6-0316-44b2-aaa3-675f6305ef8d",
+            "teamLabel": "AS",
+            "resourceTypeId": "20000000000000000000000000000109",
+            "resourceTypeName": "Process"
+        },
+        {
+            "teamId": "86e69a7c-26d1-45ec-a934-f0f597da6380",
+            "teamLabel": "MOB",
+            "resourceTypeId": "20000000000000000000000000000109",
+            "resourceTypeName": "Process"
+        },
+        {
+            "teamId": "8ab19d14-6559-4ba1-9bf6-a21a4f33fd38",
+            "teamLabel": "HG",
+            "resourceTypeId": "20000000000000000000000000000109",
+            "resourceTypeName": "Process"
+        },
+        {
+            "teamId": "ab09d486-e039-43b6-8904-bd6ef8e47f99",
+            "teamLabel": "MIM",
+            "resourceTypeId": "20000000000000000000000000000109",
+            "resourceTypeName": "Process"
+        }
+    ]
+}
